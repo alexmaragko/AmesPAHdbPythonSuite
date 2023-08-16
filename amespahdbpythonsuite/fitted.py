@@ -357,11 +357,28 @@ class Fitted(Spectrum):
         # Getting fit weights
         fweight = np.array(list(self.weights.values()))
 
-        breakdown = {'solo': np.sum([self.pahdb['species'][uid]['n_solo'] for uid in self.uids]),
-                     'duo': np.sum([self.pahdb['species'][uid]['n_duo'] for uid in self.uids]),
-                     'trio': np.sum([self.pahdb['species'][uid]['n_trio'] for uid in self.uids]),
-                     'quartet': np.sum([self.pahdb['species'][uid]['n_quartet'] for uid in self.uids]),
-                     'quintet': np.sum([self.pahdb['species'][uid]['n_quintet'] for uid in self.uids])
+        solo = np.sum([self.pahdb['species'][uid]['n_solo'] for uid in self.uids]
+        duo= np.sum([self.pahdb['species'][uid]['n_duo'] for uid in self.uids]
+        trio= np.sum([self.pahdb['species'][uid]['n_trio'] for uid in self.uids]
+        quartet= np.sum([self.pahdb['species'][uid]['n_quartet'] for uid in self.uids]
+        quintet= np.sum([self.pahdb['species'][uid]['n_quintet'] for uid in self.uids]
+
+        wavgsolo = np.sum(solo*fweight)/np.sum(fweight)
+        wavgduo = np.sum(duo*fweight)/np.sum(fweight)
+        wavgtrio = np.sum(trio*fweight)/np.sum(fweight)
+        wavgquartet = np.sum(quartet*fweight)/np.sum(fweight)
+        wavgquintet = np.sum(quintet*fweight)/np.sum(fweight)
+
+        breakdown = {'solo': solo,
+                     'duo': duo,
+                     'trio': trio,
+                     'quartet': quartet,
+                     'quintet': quintet,
+                     'avg_solo': wavgsolo,
+                     'avg_duo': wavgduo,
+                     'avg_trio': wavgtrio,
+                     'avg_quartet': wavgquartet,
+                     'avg_quintet': wavgquintet
                      }
 
         total = 1.0
