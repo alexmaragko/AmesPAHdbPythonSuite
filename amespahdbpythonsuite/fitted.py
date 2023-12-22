@@ -76,10 +76,13 @@ class Fitted(Spectrum):
             axis[0].set_xlim((max(x), min(x)))
             xtitle = self.units['abscissa']['str']
 
-        axis[0].errorbar(x, self.observation,
-                         yerr=keywords['sigma'],
-                         fmt='o', mfc='white', color='k', ecolor='k',
-                         markersize=3, elinewidth=0.2, capsize=0.8, label='obs')
+        if keywords.get('sigma', False):
+            axis[0].errorbar(x, self.observation,
+                             yerr=keywords['sigma'].array,
+                             fmt='o', mfc='white', color='k', ecolor='k',
+                             markersize=3, elinewidth=0.2, capsize=0.8, label='obs')
+        else:
+            axis[0].scatter(x, self.observation, color="k", s=5, label='obs')
         if keywords.get('title', False):
             axis[0].set_title(keywords['title'])
 
