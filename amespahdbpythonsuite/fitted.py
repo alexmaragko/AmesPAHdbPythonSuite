@@ -360,11 +360,11 @@ class Fitted(Spectrum):
         # Getting fit weights
         fweight = np.array(list(self.weights.values()))
 
-        solo = np.sum([self.pahdb['species'][uid]['n_solo'] for uid in self.uids]
-        duo= np.sum([self.pahdb['species'][uid]['n_duo'] for uid in self.uids]
-        trio= np.sum([self.pahdb['species'][uid]['n_trio'] for uid in self.uids]
-        quartet= np.sum([self.pahdb['species'][uid]['n_quartet'] for uid in self.uids]
-        quintet= np.sum([self.pahdb['species'][uid]['n_quintet'] for uid in self.uids]
+        solo = np.sum([self.pahdb['species'][uid]['n_solo'] for uid in self.uids])
+        duo = np.sum([self.pahdb['species'][uid]['n_duo'] for uid in self.uids])
+        trio = np.sum([self.pahdb['species'][uid]['n_trio'] for uid in self.uids])
+        quartet = np.sum([self.pahdb['species'][uid]['n_quartet'] for uid in self.uids])
+        quintet = np.sum([self.pahdb['species'][uid]['n_quintet'] for uid in self.uids])
 
         wavgsolo = np.sum(solo*fweight)/np.sum(fweight)
         wavgduo = np.sum(duo*fweight)/np.sum(fweight)
@@ -512,7 +512,7 @@ class Fitted(Spectrum):
         as the ratio of the residual over the total spectrum area.
 
         """
-        if self.observation:
-            total_area = np.trapz(self.observation, x=self.grid)
-            resid_area = np.trapz(np.abs(self.getresidual()), x=self.grid)
-            return resid_area / total_area
+        #if self.observation:
+        total_area = np.trapz(self.observation, x=self.grid)
+        resid_area = np.trapz(np.abs(self.getresidual()), x=self.grid)
+        return resid_area / total_area

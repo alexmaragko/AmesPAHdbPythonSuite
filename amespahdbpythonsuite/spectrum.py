@@ -1,4 +1,15 @@
 #!/usr/bin/env python3
+from __future__ import annotations
+
+import astropy.units as u  # type: ignore
+import numpy as np
+from astropy.nddata import StdDevUncertainty  # type: ignore
+from scipy import optimize  # type: ignore
+from specutils import Spectrum1D, manipulation  # type: ignore
+
+import copy
+import multiprocessing as mp
+from functools import partial
 
 import numpy as np
 
@@ -67,18 +78,39 @@ class Spectrum(Transitions):
         Fits the input spectrum.
 
         """
+        from amespahdbpythonsuite import observation
+
+        if isinstance(y, Spectrum1D):
+            obs = copy.deepcopy(y)
+        elif isinstance(y, observation.Observation):
+            obs = copy.deepcopy(y.spectrum)
+        else:
+            unc = None
+            if np.any(yerr):
+                unc = StdDevUncertainty(yerr)
+            obs = Spectrum1D(
+                flux=y * u.Unit(),
+                spectral_axis=self.grid * self.units["abscissa"]["unit"],
+                uncertainty=unc,
+            )
+
+        if obs.spectral_axis.unit != u.Unit() and obs.spectral_axis.unit != u.Unit(
+            "1/cm"
+        ):
+            print("EXPECTING SPECTRAL UNITS OF 1 / CM")
+            return None
 
         matrix = []
         matrix = np.array(list(self.data.values()))
 
-        if yerr is None:
+        if obs.uncertainty is None: 
             # Do NNLS.
-            b = list(y)
+            b = obs.flux.value
             m = matrix
         else:
             # Do NNLC.
-            b = list(np.divide(y, yerr))
-            m = np.divide(matrix, yerr)
+            b = np.divide(obs.flux.value, obs.uncertainty.array)
+            m = np.divide(matrix, obs.uncertainty.array)
 
         solution, norm = optimize.nnls(m.T, b)
 
@@ -111,7 +143,7 @@ class Spectrum(Transitions):
                       grid=self.grid,
                       profile=self.profile,
                       fwhm=self.fwhm,
-                      observation=list(y),
+                      observation=obs.flux.value,
                       weights=weights)
 
     def plot(self, **keywords):
